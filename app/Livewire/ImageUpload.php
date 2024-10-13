@@ -8,6 +8,10 @@ use Livewire\WithFileUploads;
 use App\Models\Post;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\EncryptException;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Hash;
 
 class ImageUpload extends Component
 {
@@ -20,9 +24,10 @@ class ImageUpload extends Component
   
     #[Rule('required|min:3')]
     public $title;
+    public $code;
 
     public $isOpen = 0;
-  
+
     public function create()
     {
         $this->openModal();
@@ -42,10 +47,11 @@ class ImageUpload extends Component
     $this->validate();
     Post::create([
         'title' => $this->title,
+        'code' =>  Crypt::encryptString($this->code),
         'image' => $this->image->store('public/photos')
     ]);
     session()->flash('success', 'Image uploaded successfully.');
-    $this->reset('title','image');
+    $this->reset('title','image','code');
     $this->closeModal();
     }
     public function edit($id)
@@ -53,6 +59,7 @@ class ImageUpload extends Component
       $post = Post::findOrFail($id);
       $this->postId = $id;
       $this->title = $post->title;
+      $this->code = $post->code;
       $this->oldImage = $post->image;
  
       $this->openModal();
@@ -73,13 +80,14 @@ class ImageUpload extends Component
  
             $post->update([
                 'title' => $this->title,
+                'code' =>  $this->code,
                 'image' => $photo,
             ]);
             $this->postId='';
  
             session()->flash('success', 'Image updated successfully.');
             $this->closeModal();
-            $this->reset('title', 'image', 'postId');
+            $this->reset('title', 'image', 'postId','code');
     }
     public function delete($id)
     {
@@ -87,7 +95,7 @@ class ImageUpload extends Component
         Storage::delete($singleImage->image);
         $singleImage->delete();
         session()->flash('success','Image deleted Successfully!!');
-        $this->reset('title','image');
+        $this->reset('title','image','code');
     }
     
     public function render()
@@ -97,5 +105,13 @@ class ImageUpload extends Component
         ]);
     }
 
+    // public function decryptCode(string $code): string {
+    //     try {
+    //         return Crypt::decryptString($code);
+    //         session()->flash('success', 'Code Decrypted successfully.');
+    //     } catch (DecryptException $e) {
+    //         return 'Error decrypting code';
+    //     }
+    // }
 
 }

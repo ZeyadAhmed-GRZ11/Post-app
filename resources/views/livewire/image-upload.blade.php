@@ -18,6 +18,11 @@
         </div>
     </div>
 @endif
+                <!-- <div class="my-4">
+                   <label for="code" class="block text-gray-700 font-bold mb-2">code:</label>
+                   <input type="text" wire:model="code" id="code" class="w-full border border-gray-300 px-4 py-2 rounded">
+                   <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" wire:click="decryptCode">Decrypt</button>
+                </div> -->
                 <section>
                     <div class="my-4">
                         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" wire:click="create">Add Image</button>
@@ -37,6 +42,9 @@
                                     <label for="title" class="block text-gray-700 font-bold mb-2">Title:</label>
                                     <input type="text" wire:model="title" id="title" class="w-full border border-gray-300 px-4 py-2 rounded">
                                     <span class="text-red-500">@error('title') {{ $message }} @enderror</span>
+                                    <label for="code" class="block text-gray-700 font-bold mb-2">code:</label>
+                                    <input type="text" wire:model="code" id="code" class="w-full border border-gray-300 px-4 py-2 rounded">
+                                    <span class="text-red-500">@error('code') {{ $message }} @enderror</span>
                                 </div>
                                 @if($oldImage)
                                   <h3>Old Image</h3>
@@ -76,6 +84,9 @@
                              Image
                          </th>
                          <th scope="col" class="px-6 py-3">
+                             Code
+                         </th>
+                         <th scope="col" class="px-6 py-3">
                              Action
                          </th>
                      </tr>
@@ -89,7 +100,9 @@
                          <td class="px-6 py-4 text-white-900">
                              <img src="{{ Storage::url($post->image)}}" alt="Uploaded Image Preview" style="max-width: 200px;">
                          </td>
- 
+                         <th scope="row" class="px-6 py-4 font-medium text-white-900 whitespace-nowrap">
+                             {{$post->code}}
+                         </th>
                          <td class="px-6 py-4 text-white-900">
                              <button class="" wire:click="edit({{ $post->id }})">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ml-2 mt-0 w-4 h-4">
